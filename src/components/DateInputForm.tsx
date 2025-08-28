@@ -71,9 +71,7 @@ export default function DateInputForm({ onSubmit, loading }: DateInputFormProps)
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 sm:p-8 max-w-md mx-auto">
-      <h2 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-white mb-6 text-center">
-        生年月日を入力してください
-      </h2>
+
       
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Year Input */}
@@ -87,7 +85,7 @@ export default function DateInputForm({ onSubmit, loading }: DateInputFormProps)
             value={year}
             onChange={handleYearChange}
             placeholder={`例: ${currentYear - 25}`}
-            className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 ${
+            className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 ${
               errors.year ? 'border-red-500' : 'border-gray-300'
             }`}
             disabled={loading}
@@ -107,7 +105,7 @@ export default function DateInputForm({ onSubmit, loading }: DateInputFormProps)
             id="month"
             value={month}
             onChange={handleMonthChange}
-            className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white ${
+            className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white ${
               errors.month ? 'border-red-500' : 'border-gray-300'
             }`}
             disabled={loading}
@@ -128,7 +126,7 @@ export default function DateInputForm({ onSubmit, loading }: DateInputFormProps)
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+          className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 disabled:from-amber-300 disabled:to-amber-400 text-white font-medium py-2 px-4 rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 shadow-md hover:shadow-lg"
         >
           {loading ? (
             <div className="flex items-center justify-center">
@@ -141,9 +139,6 @@ export default function DateInputForm({ onSubmit, loading }: DateInputFormProps)
         </button>
       </form>
 
-      <p className="mt-4 text-xs text-gray-500 dark:text-gray-400 text-center">
-        {minYear}年から{currentYear}年までのデータを検索できます
-      </p>
     </div>
   );
 }
