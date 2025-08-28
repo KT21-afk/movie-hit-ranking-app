@@ -1,5 +1,11 @@
 // Movie data types and interfaces
 
+export interface WatchProvider {
+  provider_id: number;
+  provider_name: string;
+  logo_path?: string;
+}
+
 export interface Movie {
   id: number;
   title: string;
@@ -9,6 +15,7 @@ export interface Movie {
   releaseDate: string;
   genres: string[];
   overview?: string;
+  watchProviders?: WatchProvider[];
 }
 
 export interface BoxOfficeResponse {
@@ -26,6 +33,22 @@ export interface TMDbMovieResponse {
   genre_ids: number[];
   overview: string;
   revenue?: number;
+  popularity: number;
+}
+
+// TMDb Movie Details API response (includes revenue)
+export interface TMDbMovieDetailsResponse {
+  id: number;
+  title: string;
+  release_date: string;
+  poster_path?: string;
+  genres: { id: number; name: string }[];
+  overview: string;
+  revenue: number;
+  budget: number;
+  runtime: number;
+  vote_average: number;
+  vote_count: number;
 }
 
 export interface TMDbDiscoverResponse {
@@ -48,4 +71,16 @@ export interface TMDbGenresResponse {
 export interface BoxOfficeData {
   movieId: number;
   revenue: number;
+}
+
+// TMDb Watch Providers API response types
+export interface TMDbWatchProvidersResponse {
+  id: number;
+  results: {
+    JP?: {
+      flatrate?: WatchProvider[];
+      rent?: WatchProvider[];
+      buy?: WatchProvider[];
+    };
+  };
 }
