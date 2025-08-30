@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { CurrencyProvider } from '@/contexts/CurrencyContext';
+import { MovieExpandProvider } from '@/contexts/MovieExpandContext';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -29,7 +30,8 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-gray-50 dark:bg-gray-900`}
       >
         <CurrencyProvider>
-          <div className="min-h-screen flex flex-col">
+          <MovieExpandProvider>
+            <div className="min-h-screen flex flex-col">
             {/* Header */}
             <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-sm border-b border-gray-200/50 dark:border-gray-700/50 sticky top-0 z-50">
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -71,7 +73,8 @@ export default function RootLayout({
               </div>
             </div>
           </footer>
-          </div>
+            </div>
+          </MovieExpandProvider>
         </CurrencyProvider>
       </body>
     </html>
