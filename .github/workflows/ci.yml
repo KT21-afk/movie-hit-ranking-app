@@ -91,9 +91,6 @@ jobs:
         vercel-token: ${{ secrets.VERCEL_TOKEN }}
         vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
         working-directory: movie-hit-ranking-app
-        # vercel-org-id and scope are only needed for team accounts
-        # vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-        # scope: ${{ secrets.VERCEL_ORG_ID }}
 
   deploy-production:
     runs-on: ubuntu-latest
@@ -108,6 +105,3 @@ jobs:
         vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
         vercel-args: '--prod'
         working-directory: movie-hit-ranking-app
-        # vercel-org-id and scope are only needed for team accounts
-        # vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-        # scope: ${{ secrets.VERCEL_ORG_ID }}
