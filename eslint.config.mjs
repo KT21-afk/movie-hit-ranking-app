@@ -21,6 +21,12 @@ const eslintConfig = [
       'next-env.d.ts',
     ],
   },
+  {
+    files: ['*.config.js', '*.config.mjs', 'jest.config.js', 'tailwind.config.js'],
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+    },
+  },
 ];
 
 export default eslintConfig;

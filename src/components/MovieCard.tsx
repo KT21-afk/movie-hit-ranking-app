@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { Movie } from '@/types/movie';
 import { useMovieExpand } from '@/contexts/MovieExpandContext';
 import { useCurrency } from '@/contexts/CurrencyContext';
@@ -104,10 +105,13 @@ export default function MovieCard({ movie }: MovieCardProps) {
           {/* ポスター画像 */}
           <div className={STYLES.poster}>
             {movie.posterUrl ? (
-              <img
+              <Image
                 src={movie.posterUrl}
                 alt={movie.title}
+                width={128}
+                height={192}
                 className={STYLES.posterImage}
+                sizes="(max-width: 768px) 80px, 128px"
               />
             ) : (
               <div className={STYLES.posterPlaceholder}>
@@ -165,9 +169,11 @@ export default function MovieCard({ movie }: MovieCardProps) {
               ).map((provider) => (
                 <div key={provider.provider_id} className={STYLES.providerTag}>
                   {provider.logo_path && (
-                    <img
+                    <Image
                       src={`https://image.tmdb.org/t/p/w45${provider.logo_path}`}
                       alt={provider.provider_name}
+                      width={16}
+                      height={16}
                       className={STYLES.providerLogo}
                     />
                   )}
@@ -185,9 +191,11 @@ export default function MovieCard({ movie }: MovieCardProps) {
                 ).map((provider) => (
                   <div key={provider.provider_id} className={`${STYLES.flexHiddenOnDesktop} ${STYLES.providerTag}`}>
                     {provider.logo_path && (
-                      <img
+                      <Image
                         src={`https://image.tmdb.org/t/p/w45${provider.logo_path}`}
                         alt={provider.provider_name}
+                        width={16}
+                        height={16}
                         className={STYLES.providerLogo}
                       />
                     )}

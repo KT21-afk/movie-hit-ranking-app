@@ -77,7 +77,7 @@ export class TMDbService {
     const data: TMDbDiscoverResponse = await response.json();
 
     if (!response.ok) {
-      throw this.createNetworkError(response.status, data as Record<string, unknown>);
+      throw this.createNetworkError(response.status, data as unknown as Record<string, unknown>);
     }
 
     // 各映画の詳細情報とWatch Providersを並列取得
@@ -122,7 +122,7 @@ export class TMDbService {
       const data: TMDbMovieResponse = await response.json();
 
       if (!response.ok) {
-        throw this.createNetworkError(response.status, data);
+        throw this.createNetworkError(response.status, data as unknown as Record<string, unknown>);
       }
 
       return data;
@@ -418,7 +418,7 @@ export class TMDbService {
     return this.createApiError(
       ErrorCode.SERVER_ERROR,
       'An unexpected error occurred',
-      error
+      error as Record<string, unknown>
     );
   }
 }
