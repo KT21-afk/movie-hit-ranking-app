@@ -19,7 +19,9 @@
     "deploy:preview": "vercel",
     "postbuild": "next-sitemap",
     "type-check": "tsc --noEmit",
-    "pre-deploy": "npm run type-check && npm run lint && npm run test && npm run build:production"
+    "pre-deploy": "npm run type-check && npm run lint && npm run test && npm run build:production",
+    "security-check": "npm audit && git secrets --scan || echo 'git-secrets not installed'",
+    "env-check": "node -e \"console.log('🔍 Environment Variables Check:'); console.log('TMDB_API_KEY:', process.env.TMDB_API_KEY ? '✅ Set' : '❌ Not set'); console.log('TMDB_BASE_URL:', process.env.TMDB_BASE_URL || '❌ Not set'); console.log('NODE_ENV:', process.env.NODE_ENV || 'development'); if (!process.env.TMDB_API_KEY) { console.log('\\n📝 To fix: Copy .env.local.example to .env.local and add your TMDB API key'); }\""
   },
   "dependencies": {
     "@tailwindcss/line-clamp": "^0.4.4",
@@ -40,6 +42,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/webpack": "^5.28.5",
+    "audit-ci": "^7.1.0",
     "eslint": "^9",
     "eslint-config-next": "15.5.2",
     "eslint-config-prettier": "^10.1.8",

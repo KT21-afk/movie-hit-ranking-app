@@ -81,7 +81,8 @@ describe('MovieCard', () => {
 
       const posterImage = screen.getByAltText('Test Movie');
       expect(posterImage).toBeInTheDocument();
-      expect(posterImage).toHaveAttribute('src', 'https://example.com/poster.jpg');
+      // Next.js Image component transforms the src URL
+      expect(posterImage).toHaveAttribute('src', expect.stringContaining('https%3A%2F%2Fexample.com%2Fposter.jpg'));
     });
 
     it('posterUrlが提供されていない場合にプレースホルダーが表示される', () => {

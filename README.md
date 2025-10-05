@@ -1,8 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Movie Hit Ranking App
+
+映画の興行収入ランキングを表示するNext.jsアプリケーションです。
+
+## 環境設定
+
+### 1. 環境変数の設定
+
+開発環境で実行するには、TMDB API キーが必要です：
+
+```bash
+# 環境変数テンプレートをコピー
+cp .env.local.example .env.local
+
+# .env.local を編集してAPI キーを設定
+# TMDB_API_KEY=your_actual_api_key_here
+```
+
+**TMDB API キーの取得方法：**
+1. [TMDB](https://www.themoviedb.org/) でアカウント作成
+2. [API Settings](https://www.themoviedb.org/settings/api) でAPI キーを取得
+3. `.env.local` に設定
+
+**環境変数の確認：**
+```bash
+npm run env-check
+```
+
+詳細な設定方法は [環境変数設定ガイド](./docs/ENVIRONMENT_SETUP.md) を参照してください。
+
+### 2. 依存関係のインストール
+
+```bash
+npm install
+```
 
 ## Getting Started
 
-First, run the development server:
+開発サーバーを起動:
 
 ```bash
 npm run dev

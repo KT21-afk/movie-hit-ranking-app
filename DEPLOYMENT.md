@@ -1,206 +1,202 @@
-# Deployment Guide
+# デプロイメントガイド
 
-## Production Deployment Checklist
+## 概要
+このプロジェクトは GitHub Actions と Vercel を使用した自動 CI/CD パイプラインを採用しています。
 
-### Pre-deployment Requirements
+## CI/CD フロー
 
-- [ ] TMDb API key obtained from [The Movie Database](https://www.themoviedb.org/settings/api)
-- [ ] Vercel account created and CLI installed
-- [ ] Environment variables configured
-- [ ] All tests passing
-- [ ] Code linted and formatted
-- [ ] Performance optimizations verified
+### 1. プルリクエスト時
+```
+PR作成 → GitHub Actions実行 → テスト・ビルド → Vercelプレビューデプロイ
+```
 
-### Environment Variables Setup
+### 2. メインブランチへのマージ時
+```
+mainブランチpush → GitHub Actions実行 → テスト・ビルド → Vercel本番デプロイ
+```
 
-#### Required Variables
+## 初回セットアップ
+
+### 1. GitHubリポジトリの作成
 ```bash
+# リモートリポジトリを追加
+git remote add origin https://github.com/your-username/movie-hit-ranking-app.git
+
+# 初回プッシュ
+git add .
+git commit -m "Initial commit"
+git push -u origin main
+```
+
+### 2. Vercelプロジェクトの作成
+1. [Vercel Dashboard](https://vercel.com/dashboard) にアクセス
+2. "New Project" をクリック
+3. GitHubリポジトリを選択
+4. プロジェクト設定:
+   - Framework Preset: Next.js
+   - Root Directory: `movie-hit-ranking-app`
+   - Build Command: `npm run build:production`
+   - Output Directory: `.next`
+   - Install Command: `npm ci`
+
+### 3. 環境変数の設定
+
+#### Vercel環境変数
+Vercel Dashboard > Settings > Environment Variables で以下を設定:
+
+**Production環境:**
+```
 TMDB_API_KEY=your_tmdb_api_key_here
 TMDB_BASE_URL=https://api.themoviedb.org/3
-```
-
-#### Optional Variables
-```bash
+NODE_ENV=production
 NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
-NEXT_PUBLIC_GA_ID=your_google_analytics_id
 NEXT_PUBLIC_VERCEL_ANALYTICS=true
-RATE_LIMIT_MAX_REQUESTS=100
-RATE_LIMIT_WINDOW_MS=900000
 ```
 
-### Deployment Steps
+**Preview環境:**
+```
+TMDB_API_KEY=your_tmdb_api_key_here
+TMDB_BASE_URL=https://api.themoviedb.org/3
+NODE_ENV=development
+```
 
-#### 1. Vercel Deployment (Recommended)
+#### GitHub Secrets
+GitHub Repository > Settings > Secrets and variables > Actions で以下を設定:
 
-1. **Install Vercel CLI**
-   ```bash
-   npm i -g vercel
-   ```
+**必須:**
+```
+TMDB_API_KEY=your_tmdb_api_key_here
+VERCEL_TOKEN=your_vercel_token
+VERCEL_PROJECT_ID=your_vercel_project_id
+```
 
-2. **Login to Vercel**
-   ```bash
-   vercel login
-   ```
+**チームアカウントの場合のみ:**
+```
+VERCEL_ORG_ID=your_vercel_org_id
+```
 
-3. **Deploy to Preview**
-   ```bash
-   npm run deploy:preview
-   ```
+**⚠️ セキュリティ重要事項:**
+- ✅ API キーは GitHub Secrets に移動済み
+- ✅ 本番環境のAPI キーは GitHub Secrets と Vercel Environment Variables で管理
+- ✅ 開発環境では `.env.local` を使用（.gitignore で除外済み）
+- ❌ API キーを含む `.env` ファイルは絶対にコミットしない
 
-4. **Deploy to Production**
-   ```bash
-   npm run deploy:vercel
-   ```
+**環境変数の確認:**
+```bash
+npm run env-check
+```
 
-#### 2. Manual Deployment Steps
+### 4. Vercel認証情報の取得
 
-1. **Pre-deployment Check**
-   ```bash
-   npm run pre-deploy
-   ```
+#### VERCEL_TOKEN
+1. [Vercel Account Settings](https://vercel.com/account/tokens) にアクセス
+2. "Create Token" をクリック
+3. トークン名を入力して作成
 
-2. **Build for Production**
-   ```bash
-   npm run build:production
-   ```
+#### VERCEL_ORG_ID & VERCEL_PROJECT_ID
+```bash
+# Vercel CLIをインストール
+npm i -g vercel
 
-3. **Start Production Server**
-   ```bash
-   npm start
-   ```
+# プロジェクトディレクトリでログイン
+cd movie-hit-ranking-app
+vercel login
 
-### Environment Configuration
+# プロジェクトをリンク
+vercel link
 
-#### Vercel Environment Variables
+# IDを確認
+cat .vercel/project.json
+```
 
-Set the following environment variables in your Vercel dashboard:
+## デプロイメント
 
-1. Go to your project settings in Vercel
-2. Navigate to "Environment Variables"
-3. Add the required variables:
-   - `TMDB_API_KEY` (Production)
-   - `TMDB_BASE_URL` (Production)
-   - `NEXT_PUBLIC_APP_URL` (Production)
+### 自動デプロイ
+```bash
+# 開発ブランチでの作業
+git checkout -b feature/new-feature
+# 変更を加える
+git add .
+git commit -m "Add new feature"
+git push origin feature/new-feature
 
-#### Local Production Testing
+# プルリクエストを作成 → プレビューデプロイが自動実行
 
-1. Copy environment template:
-   ```bash
-   cp .env.production.example .env.production.local
-   ```
+# メインブランチにマージ → 本番デプロイが自動実行
+```
 
-2. Fill in your production values
-3. Test locally:
-   ```bash
-   npm run build:production
-   npm start
-   ```
+### 手動デプロイ（緊急時）
+```bash
+# プレビューデプロイ
+npm run deploy:preview
 
-### Security Considerations
+# 本番デプロイ
+npm run deploy:vercel
+```
 
-#### API Key Security
-- Never commit API keys to version control
-- Use environment variables for all sensitive data
-- Rotate API keys regularly
-- Monitor API usage for unusual activity
+## 監視とメンテナンス
 
-#### Headers and Security
-The application includes the following security headers:
-- `X-Content-Type-Options: nosniff`
-- `X-Frame-Options: DENY`
-- `X-XSS-Protection: 1; mode=block`
-- `Strict-Transport-Security` (HTTPS only)
-- `Referrer-Policy: strict-origin-when-cross-origin`
+### ビルド状況の確認
+- GitHub Actions: リポジトリの "Actions" タブ
+- Vercel: [Vercel Dashboard](https://vercel.com/dashboard) の Deployments
 
-### Performance Optimizations
+### ログの確認
+```bash
+# Vercelログの確認
+vercel logs your-deployment-url
+```
 
-#### Image Optimization
-- WebP and AVIF format support
-- Automatic image resizing
-- 24-hour cache TTL for TMDb images
+### パフォーマンス監視
+- Vercel Analytics（自動有効）
+- Core Web Vitals の監視
+- エラー追跡
 
-#### API Caching
-- 5-minute cache for API responses
-- 10-minute stale-while-revalidate
+## トラブルシューティング
 
-#### Bundle Optimization
-- Tree shaking enabled
-- Package imports optimized
-- Bundle analysis available with `npm run build:analyze`
+### よくある問題
 
-### Monitoring and Analytics
+#### 1. ビルドエラー
+```bash
+# ローカルでビルドテスト
+npm run build:production
+```
 
-#### Performance Monitoring
-- Vercel Analytics (optional)
-- Core Web Vitals tracking
-- API response time monitoring
+#### 2. 環境変数エラー
+- Vercel Dashboard で環境変数を確認
+- GitHub Secrets の設定を確認
 
-#### Error Tracking
-- Console error logging
-- API error handling
-- User-friendly error messages
+#### 3. テストエラー
+```bash
+# ローカルでテスト実行
+npm run test:coverage
+```
 
-### Troubleshooting
+#### 4. デプロイ失敗
+- GitHub Actions のログを確認
+- Vercel のデプロイログを確認
 
-#### Common Issues
+### サポート
+- GitHub Issues でバグ報告
+- Vercel Support でインフラ関連の問題
 
-1. **TMDb API Key Issues**
-   - Verify API key is valid
-   - Check API key permissions
-   - Ensure environment variable is set correctly
+## セキュリティ
 
-2. **Build Failures**
-   - Run `npm run type-check` to check TypeScript errors
-   - Run `npm run lint` to check code quality
-   - Verify all dependencies are installed
+### 定期的なメンテナンス
+```bash
+# 依存関係の脆弱性チェック
+npm audit
 
-3. **Performance Issues**
-   - Use `npm run build:analyze` to check bundle size
-   - Verify image optimization is working
-   - Check API response times
+# 依存関係の更新
+npm update
 
-#### Support Resources
-- [Next.js Deployment Documentation](https://nextjs.org/docs/deployment)
-- [Vercel Documentation](https://vercel.com/docs)
-- [TMDb API Documentation](https://developers.themoviedb.org/3)
+# セキュリティ修正の適用
+npm audit fix
+```
 
-### Post-deployment Verification
+### セキュリティヘッダー
+- CSP (Content Security Policy)
+- HSTS (HTTP Strict Transport Security)
+- X-Frame-Options
+- X-Content-Type-Options
 
-After deployment, verify the following:
-
-- [ ] Application loads correctly
-- [ ] Movie search functionality works
-- [ ] Images load and display properly
-- [ ] Error handling works as expected
-- [ ] Performance metrics are acceptable
-- [ ] Security headers are present
-- [ ] Analytics tracking is working (if configured)
-
-### Rollback Procedure
-
-If issues occur after deployment:
-
-1. **Vercel Rollback**
-   ```bash
-   vercel rollback [deployment-url]
-   ```
-
-2. **Manual Rollback**
-   - Revert to previous commit
-   - Redeploy previous version
-   - Verify functionality
-
-### Maintenance
-
-#### Regular Tasks
-- Monitor API usage and costs
-- Update dependencies monthly
-- Review and rotate API keys quarterly
-- Monitor performance metrics
-- Update security headers as needed
-
-#### Updates
-- Test all updates in preview environment first
-- Use semantic versioning for releases
-- Document all changes in changelog
-- Notify users of major updates
+これらは `vercel.json` と `next.config.ts` で設定済みです。

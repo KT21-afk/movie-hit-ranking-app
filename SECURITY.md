@@ -1,54 +1,107 @@
-# セキュリティガイドライン
+# セキュリティガイド
 
-## 環境変数の設定
+## API キー管理
 
-本アプリケーションを実行するには、以下の環境変数が必要です：
+### 現在の設定
+- ✅ API キーは GitHub Secrets で管理
+- ✅ 本番環境は Vercel Environment Variables で管理  
+- ✅ 開発環境は `.env.local` で管理（Git除外済み）
+- ✅ `.env.local.template` で開発者向けガイド提供
 
-### 必須環境変数
+### 重要な注意事項
 
+#### ❌ 絶対にやってはいけないこと
 ```bash
-# TMDb API設定
-TMDB_API_KEY=your_tmdb_api_key_here
-TMDB_BASE_URL=https://api.themoviedb.org/3
+# これらのファイルをコミットしない
+git add .env.local
+git add .env.production
+git commit -m "Add API keys" # ← 危険！
 ```
 
-### 環境変数ファイルの作成
+#### ✅ 正しい方法
+```bash
+# 開発環境
+cp .env.local.template .env.local
+# .env.local を編集してAPI キーを設定
 
-1. `.env.local`ファイルが既に存在します
-2. `TMDB_API_KEY=your_tmdb_api_key_here`の部分を実際のTMDb APIキーに置き換えてください
-3. **重要**: 実際のAPIキーを設定した後は、`.env.local`ファイルを絶対にGitにコミットしないでください
+# 本番環境
+# GitHub Secrets と Vercel Environment Variables で設定
+```
 
-### TMDb APIキーの取得方法
+## Git履歴のクリーンアップ
 
-1. [TMDb](https://www.themoviedb.org/)でアカウントを作成
-2. Settings > API でAPIキーを取得
-3. `.env.local`ファイルの`your_tmdb_api_key_here`を実際のキーに置き換え
+もしAPI キーを誤ってコミットしてしまった場合：
 
-## セキュリティ機能
+### 1. 最新コミットから削除
+```bash
+# ファイルを修正
+git add .env.local
+git commit --amend --no-edit
 
-### 実装済みセキュリティ対策
+# または、ファイルを完全に削除
+git rm --cached .env.local
+git commit --amend --no-edit
+```
 
-- **セキュリティヘッダー**: CSP, XSS保護, フレーム保護
-- **入力値検証**: APIパラメータの範囲チェック
-- **エラーハンドリング**: 機密情報を含まないエラーレスポンス
-- **タイムアウト設定**: API呼び出しの10秒タイムアウト
-- **レート制限**: TMDb APIの制限に準拠
+### 2. 履歴全体からAPI キーを削除
+```bash
+# git-filter-repo を使用（推奨）
+pip install git-filter-repo
+git filter-repo --path .env.local --invert-paths
 
-### 開発時の注意事項
+# または BFG Repo-Cleaner を使用
+java -jar bfg.jar --delete-files .env.local
+git reflog expire --expire=now --all && git gc --prune=now --aggressive
+```
 
-1. **APIキーの管理**
-   - 本番環境では環境変数で設定
-   - 開発環境でも`.env.local`を使用
-   - コードにハードコードしない
+### 3. API キーの無効化
+```bash
+# 1. TMDB でAPI キーを無効化
+# 2. 新しいAPI キーを生成
+# 3. GitHub Secrets と Vercel で更新
+```
 
-2. **ログ出力**
-   - 本番環境では機密情報をログに出力しない
-   - 開発環境のみでデバッグログを使用
+## 継続的なセキュリティ
 
-3. **依存関係の管理**
-   - 定期的に`npm audit`を実行
-   - 脆弱性のあるパッケージは速やかに更新
+### 定期チェック
+```bash
+# 脆弱性スキャン
+npm run security-check
 
-## 報告
+# 環境変数確認
+npm run env-check
 
-セキュリティ上の問題を発見した場合は、GitHubのIssueではなく、直接開発者に連絡してください。
+# 依存関係の更新
+npm audit fix
+npm update
+```
+
+### Git Hooks（推奨）
+```bash
+# pre-commit hook でAPI キーの検出
+echo '#!/bin/sh
+if git diff --cached --name-only | grep -E "\.(env|key)"; then
+  echo "Warning: Environment files detected in commit"
+  exit 1
+fi' > .git/hooks/pre-commit
+chmod +x .git/hooks/pre-commit
+```
+
+## 緊急時の対応
+
+### API キーが漏洩した場合
+1. **即座にAPI キーを無効化**
+2. **新しいAPI キーを生成**
+3. **GitHub Secrets を更新**
+4. **Vercel Environment Variables を更新**
+5. **Git履歴からAPI キーを削除**
+6. **チームメンバーに通知**
+
+### 連絡先
+- セキュリティ問題: [GitHub Issues](https://github.com/your-repo/issues)
+- 緊急時: プロジェクト管理者に直接連絡
+
+## 参考資料
+- [GitHub Secrets Documentation](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
+- [Vercel Environment Variables](https://vercel.com/docs/concepts/projects/environment-variables)
+- [OWASP API Security](https://owasp.org/www-project-api-security/)
