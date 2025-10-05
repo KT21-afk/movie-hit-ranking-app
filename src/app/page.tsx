@@ -62,8 +62,6 @@ export default function Home() {
     }
   };
 
-
-
   const getNextMonth = (year: number, month: number) => {
     if (month === 12) {
       return { year: year + 1, month: 1 };

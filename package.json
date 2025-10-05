@@ -12,10 +12,19 @@
     "format:check": "prettier --check .",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "build:analyze": "ANALYZE=true npm run build",
+    "build:production": "NODE_ENV=production npm run build",
+    "deploy:vercel": "vercel --prod",
+    "deploy:preview": "vercel",
+    "postbuild": "next-sitemap",
+    "type-check": "tsc --noEmit",
+    "pre-deploy": "npm run type-check && npm run lint && npm run test && npm run build:production"
   },
   "dependencies": {
     "@tailwindcss/line-clamp": "^0.4.4",
+    "@vercel/analytics": "^1.5.0",
+    "@vercel/speed-insights": "^1.2.0",
     "next": "15.5.2",
     "react": "19.1.0",
     "react-dom": "19.1.0"
@@ -30,16 +39,19 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/webpack": "^5.28.5",
     "eslint": "^9",
     "eslint-config-next": "15.5.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "jest": "^30.1.1",
     "jest-environment-jsdom": "^30.1.1",
+    "next-sitemap": "^4.2.3",
     "node-mocks-http": "^1.17.2",
     "prettier": "^3.6.2",
     "tailwindcss": "^4",
     "typescript": "^5",
+    "webpack": "^5.101.3",
     "whatwg-fetch": "^3.6.20"
   }
 }

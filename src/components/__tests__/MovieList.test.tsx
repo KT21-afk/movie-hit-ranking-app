@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MovieList from '../MovieList';
 import { MovieExpandProvider } from '@/contexts/MovieExpandContext';
@@ -67,8 +67,8 @@ describe('MovieList', () => {
     jest.clearAllMocks();
   });
 
-  describe('Basic Rendering', () => {
-    it('renders nothing when movies array is empty', () => {
+  describe('基本的なレンダリング', () => {
+    it('映画配列が空の場合に何も表示しない', () => {
       const { container } = renderWithProvider(
         <MovieList {...defaultProps} movies={[]} />
       );
@@ -76,13 +76,13 @@ describe('MovieList', () => {
       expect(container.firstChild).toBeNull();
     });
 
-    it('renders movie list with correct title and count', () => {
+    it('正しいタイトルと件数で映画リストを表示する', () => {
       renderWithProvider(<MovieList {...defaultProps} />);
       
       expect(screen.getByText('ランキング結果 (3件) - 2023年1月')).toBeInTheDocument();
     });
 
-    it('renders all movie cards', () => {
+    it('すべての映画カードを表示する', () => {
       renderWithProvider(<MovieList {...defaultProps} />);
       
       expect(screen.getByTestId('movie-card-1')).toBeInTheDocument();
@@ -90,7 +90,7 @@ describe('MovieList', () => {
       expect(screen.getByTestId('movie-card-3')).toBeInTheDocument();
     });
 
-    it('renders movies in correct order', () => {
+    it('映画を正しい順序で表示する', () => {
       renderWithProvider(<MovieList {...defaultProps} />);
       
       const movieCards = screen.getAllByTestId(/movie-card-/);
@@ -103,14 +103,14 @@ describe('MovieList', () => {
     });
   });
 
-  describe('Warning Message', () => {
-    it('shows warning when less than 10 movies are available', () => {
+  describe('警告メッセージ', () => {
+    it('10件未満の映画が利用可能な場合に警告を表示する', () => {
       renderWithProvider(<MovieList {...defaultProps} />);
       
       expect(screen.getByText('この期間に公開された映画で興行収入データが利用可能なのは3件です。')).toBeInTheDocument();
     });
 
-    it('does not show warning when 10 or more movies are available', () => {
+    it('10件以上の映画が利用可能な場合に警告を表示しない', () => {
       const tenMovies = Array.from({ length: 10 }, (_, i) => ({
         id: i + 1,
         title: `Movie ${i + 1}`,
@@ -126,8 +126,8 @@ describe('MovieList', () => {
     });
   });
 
-  describe('Navigation Buttons', () => {
-    it('renders navigation buttons with current month display', () => {
+  describe('ナビゲーションボタン', () => {
+    it('現在の月表示とナビゲーションボタンを表示する', () => {
       renderWithProvider(<MovieList {...defaultProps} />);
       
       expect(screen.getByText('前の月')).toBeInTheDocument();
@@ -136,7 +136,7 @@ describe('MovieList', () => {
       expect(screen.getByText('のランキング')).toBeInTheDocument();
     });
 
-    it('calls onPreviousMonth when previous button is clicked', async () => {
+    it('前の月ボタンがクリックされた時にonPreviousMonthが呼ばれる', async () => {
       const user = userEvent.setup();
       renderWithProvider(<MovieList {...defaultProps} />);
       
@@ -146,7 +146,7 @@ describe('MovieList', () => {
       expect(defaultProps.onPreviousMonth).toHaveBeenCalledTimes(1);
     });
 
-    it('calls onNextMonth when next button is clicked', async () => {
+    it('次の月ボタンがクリックされた時にonNextMonthが呼ばれる', async () => {
       const user = userEvent.setup();
       renderWithProvider(<MovieList {...defaultProps} />);
       
@@ -156,7 +156,7 @@ describe('MovieList', () => {
       expect(defaultProps.onNextMonth).toHaveBeenCalledTimes(1);
     });
 
-    it('disables next button when next month is not available', () => {
+    it('次の月が利用できない場合に次の月ボタンが無効化される', () => {
       const propsWithNoNextMonth = {
         ...defaultProps,
         isNextMonthAvailable: jest.fn(() => false),
@@ -168,7 +168,7 @@ describe('MovieList', () => {
       expect(nextButton).toBeDisabled();
     });
 
-    it('disables navigation buttons when loading', () => {
+    it('ローディング中にナビゲーションボタンが無効化される', () => {
       renderWithProvider(<MovieList {...defaultProps} loading={true} />);
       
       const previousButton = screen.getByText('前の月');
@@ -179,8 +179,8 @@ describe('MovieList', () => {
     });
   });
 
-  describe('Loading State', () => {
-    it('disables navigation buttons during loading', () => {
+  describe('ローディング状態', () => {
+    it('ローディング中にナビゲーションボタンが無効化される', () => {
       renderWithProvider(<MovieList {...defaultProps} loading={true} />);
       
       const previousButton = screen.getByText('前の月');
@@ -190,7 +190,7 @@ describe('MovieList', () => {
       expect(nextButton).toBeDisabled();
     });
 
-    it('still renders movie list during loading', () => {
+    it('ローディング中でも映画リストが表示される', () => {
       renderWithProvider(<MovieList {...defaultProps} loading={true} />);
       
       expect(screen.getByTestId('movie-card-1')).toBeInTheDocument();
@@ -199,8 +199,8 @@ describe('MovieList', () => {
     });
   });
 
-  describe('Edge Cases', () => {
-    it('handles null currentYear and currentMonth gracefully', () => {
+  describe('エッジケース', () => {
+    it('currentYearとcurrentMonthがnullの場合を適切に処理する', () => {
       const propsWithNullValues = {
         ...defaultProps,
         currentYear: null,
@@ -215,7 +215,7 @@ describe('MovieList', () => {
       expect(screen.queryByText('次の月')).not.toBeInTheDocument();
     });
 
-    it('handles single movie correctly', () => {
+    it('単一の映画を正しく処理する', () => {
       const singleMovie = [mockMovies[0]];
       
       renderWithProvider(<MovieList {...defaultProps} movies={singleMovie} />);
@@ -224,7 +224,7 @@ describe('MovieList', () => {
       expect(screen.getByText('この期間に公開された映画で興行収入データが利用可能なのは1件です。')).toBeInTheDocument();
     });
 
-    it('handles different year and month values', () => {
+    it('異なる年と月の値を処理する', () => {
       const propsWithDifferentDate = {
         ...defaultProps,
         currentYear: 2022,
@@ -238,8 +238,8 @@ describe('MovieList', () => {
     });
   });
 
-  describe('Button Styling and States', () => {
-    it('applies correct CSS classes to navigation buttons', () => {
+  describe('ボタンスタイルと状態', () => {
+    it('ナビゲーションボタンに正しいCSSクラスが適用される', () => {
       renderWithProvider(<MovieList {...defaultProps} />);
       
       const previousButton = screen.getByText('前の月');
@@ -250,7 +250,7 @@ describe('MovieList', () => {
       expect(nextButton).toHaveClass('px-4', 'py-2');
     });
 
-    it('shows proper cursor state for disabled next button', () => {
+    it('無効化された次の月ボタンに適切なカーソル状態が表示される', () => {
       const propsWithNoNextMonth = {
         ...defaultProps,
         isNextMonthAvailable: jest.fn(() => false),

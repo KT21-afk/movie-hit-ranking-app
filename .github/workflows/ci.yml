@@ -1,0 +1,98 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+        cache-dependency-path: movie-box-office-app/package-lock.json
+        
+    - name: Install dependencies
+      run: |
+        cd movie-box-office-app
+        npm ci
+        
+    - name: Run type check
+      run: |
+        cd movie-box-office-app
+        npm run type-check
+        
+    - name: Run linting
+      run: |
+        cd movie-box-office-app
+        npm run lint
+        
+    - name: Run formatting check
+      run: |
+        cd movie-box-office-app
+        npm run format:check
+        
+    - name: Run tests
+      run: |
+        cd movie-box-office-app
+        npm run test:coverage
+      env:
+        TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+        TMDB_BASE_URL: https://api.themoviedb.org/3
+        
+    - name: Build application
+      run: |
+        cd movie-box-office-app
+        npm run build:production
+      env:
+        TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+        TMDB_BASE_URL: https://api.themoviedb.org/3
+        
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v3
+      with:
+        file: movie-box-office-app/coverage/lcov.info
+        flags: unittests
+        name: codecov-umbrella
+        
+  security:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+        cache-dependency-path: movie-box-office-app/package-lock.json
+        
+    - name: Install dependencies
+      run: |
+        cd movie-box-office-app
+        npm ci
+        
+    - name: Run security audit
+      run: |
+        cd movie-box-office-app
+        npm audit --audit-level=moderate
+        
+    - name: Check for known vulnerabilities
+      run: |
+        cd movie-box-office-app
+        npx audit-ci --moderate

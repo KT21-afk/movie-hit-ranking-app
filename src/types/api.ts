@@ -9,7 +9,7 @@ export interface BoxOfficeRequest {
 export interface ApiError {
   code: string;
   message: string;
-  details?: any;
+  details?: Record<string, unknown>;
 }
 
 export interface ApiResponse<T> {

@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { CurrencyProvider } from '@/contexts/CurrencyContext';
 import { MovieExpandProvider } from '@/contexts/MovieExpandContext';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -15,8 +17,54 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: '映画ヒットランキング',
+  title: '映画ヒットランキング | その年月の映画興行収入TOP10',
   description: '好きな年月を入力して、その時期の映画興行収入TOP10を確認しましょう。映画ヒットランキングで映画の歴史を振り返ろう。',
+  keywords: ['映画', '興行収入', 'ランキング', 'TOP10', '映画ヒット', '映画歴史'],
+  authors: [{ name: 'Movie Hit Ranking' }],
+  creator: 'Movie Hit Ranking',
+  publisher: 'Movie Hit Ranking',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://movie-hit-ranking.vercel.app'),
+  alternates: {
+    canonical: '/',
+  },
+  openGraph: {
+    title: '映画ヒットランキング | その年月の映画興行収入TOP10',
+    description: '好きな年月を入力して、その時期の映画興行収入TOP10を確認しましょう。',
+    url: '/',
+    siteName: '映画ヒットランキング',
+    locale: 'ja_JP',
+    type: 'website',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: '映画ヒットランキング',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: '映画ヒットランキング | その年月の映画興行収入TOP10',
+    description: '好きな年月を入力して、その時期の映画興行収入TOP10を確認しましょう。',
+    images: ['/og-image.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 };
 
 export default function RootLayout({
@@ -76,6 +124,8 @@ export default function RootLayout({
             </div>
           </MovieExpandProvider>
         </CurrencyProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

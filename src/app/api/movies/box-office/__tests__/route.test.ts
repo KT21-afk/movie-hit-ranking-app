@@ -53,8 +53,8 @@ describe('/api/movies/box-office', () => {
     jest.restoreAllMocks();
   });
 
-  describe('Successful Requests', () => {
-    it('returns movies for valid year and month', async () => {
+  describe('成功リクエスト', () => {
+    it('有効な年と月に対して映画データを返す', async () => {
       mockGetMoviesByDate.mockResolvedValue(mockMovies);
 
       const request = createRequest('http://localhost:3000/api/movies/box-office?year=2023&month=1');
@@ -71,7 +71,7 @@ describe('/api/movies/box-office', () => {
       expect(mockGetMoviesByDate).toHaveBeenCalledWith(2023, 1);
     });
 
-    it('sets correct cache headers', async () => {
+    it('正しいキャッシュヘッダーを設定する', async () => {
       mockGetMoviesByDate.mockResolvedValue(mockMovies);
 
       const request = createRequest('http://localhost:3000/api/movies/box-office?year=2023&month=1');
@@ -82,7 +82,7 @@ describe('/api/movies/box-office', () => {
       );
     });
 
-    it('handles edge case years (1900 and current year)', async () => {
+    it('エッジケースの年（1900年と現在年）を適切に処理する', async () => {
       mockGetMoviesByDate.mockResolvedValue([]);
       const currentYear = new Date().getFullYear();
 
@@ -98,8 +98,8 @@ describe('/api/movies/box-office', () => {
     });
   });
 
-  describe('Validation Errors', () => {
-    it('returns 400 when year parameter is missing', async () => {
+  describe('バリデーションエラー', () => {
+    it('年パラメータが不足している場合に400を返す', async () => {
       const request = createRequest('http://localhost:3000/api/movies/box-office?month=1');
       const response = await GET(request);
       const data = await response.json();
@@ -110,7 +110,7 @@ describe('/api/movies/box-office', () => {
       expect(data.error?.message).toBe('Year and month parameters are required');
     });
 
-    it('returns 400 when month parameter is missing', async () => {
+    it('月パラメータが不足している場合に400を返す', async () => {
       const request = createRequest('http://localhost:3000/api/movies/box-office?year=2023');
       const response = await GET(request);
       const data = await response.json();
@@ -121,7 +121,7 @@ describe('/api/movies/box-office', () => {
       expect(data.error?.message).toBe('Year and month parameters are required');
     });
 
-    it('returns 400 when both parameters are missing', async () => {
+    it('両方のパラメータが不足している場合に400を返す', async () => {
       const request = createRequest('http://localhost:3000/api/movies/box-office');
       const response = await GET(request);
       const data = await response.json();
@@ -132,7 +132,7 @@ describe('/api/movies/box-office', () => {
       expect(data.error?.message).toBe('Year and month parameters are required');
     });
 
-    it('returns 400 when year is not a valid number', async () => {
+    it('年が有効な数値でない場合に400を返す', async () => {
       const request = createRequest('http://localhost:3000/api/movies/box-office?year=abc&month=1');
       const response = await GET(request);
       const data = await response.json();
@@ -143,7 +143,7 @@ describe('/api/movies/box-office', () => {
       expect(data.error?.message).toBe('Year and month must be valid numbers');
     });
 
-    it('returns 400 when month is not a valid number', async () => {
+    it('月が有効な数値でない場合に400を返す', async () => {
       const request = createRequest('http://localhost:3000/api/movies/box-office?year=2023&month=abc');
       const response = await GET(request);
       const data = await response.json();
@@ -154,7 +154,7 @@ describe('/api/movies/box-office', () => {
       expect(data.error?.message).toBe('Year and month must be valid numbers');
     });
 
-    it('returns 400 when year is below minimum (1900)', async () => {
+    it('年が最小値（1900）を下回る場合に400を返す', async () => {
       const request = createRequest('http://localhost:3000/api/movies/box-office?year=1899&month=1');
       const response = await GET(request);
       const data = await response.json();
@@ -165,7 +165,7 @@ describe('/api/movies/box-office', () => {
       expect(data.error?.message).toContain('Year must be between 1900 and');
     });
 
-    it('returns 400 when year is above current year', async () => {
+    it('年が現在年を上回る場合に400を返す', async () => {
       const currentYear = new Date().getFullYear();
       const futureYear = currentYear + 1;
       
@@ -179,7 +179,7 @@ describe('/api/movies/box-office', () => {
       expect(data.error?.message).toContain('Year must be between 1900 and');
     });
 
-    it('returns 400 when month is below 1', async () => {
+    it('月が1を下回る場合に400を返す', async () => {
       const request = createRequest('http://localhost:3000/api/movies/box-office?year=2023&month=0');
       const response = await GET(request);
       const data = await response.json();
@@ -190,7 +190,7 @@ describe('/api/movies/box-office', () => {
       expect(data.error?.message).toBe('Month must be between 1 and 12');
     });
 
-    it('returns 400 when month is above 12', async () => {
+    it('月が12を上回る場合に400を返す', async () => {
       const request = createRequest('http://localhost:3000/api/movies/box-office?year=2023&month=13');
       const response = await GET(request);
       const data = await response.json();
@@ -202,8 +202,8 @@ describe('/api/movies/box-office', () => {
     });
   });
 
-  describe('Service Error Handling', () => {
-    it('handles validation errors from service', async () => {
+  describe('サービスエラーハンドリング', () => {
+    it('サービスからのバリデーションエラーを処理する', async () => {
       const validationError = {
         code: 'VALIDATION_ERROR',
         message: 'Service validation error',
@@ -219,7 +219,7 @@ describe('/api/movies/box-office', () => {
       expect(data.error).toEqual(validationError);
     });
 
-    it('handles not found errors from service', async () => {
+    it('サービスからの見つからないエラーを処理する', async () => {
       const notFoundError = {
         code: 'NOT_FOUND',
         message: 'No movies found for this period',
@@ -235,7 +235,7 @@ describe('/api/movies/box-office', () => {
       expect(data.error).toEqual(notFoundError);
     });
 
-    it('handles unknown errors from service', async () => {
+    it('サービスからの不明なエラーを処理する', async () => {
       const unknownError = new Error('Unknown error');
       mockGetMoviesByDate.mockRejectedValue(unknownError);
 
@@ -250,8 +250,8 @@ describe('/api/movies/box-office', () => {
     });
   });
 
-  describe('Response Format', () => {
-    it('returns correct response structure for successful requests', async () => {
+  describe('レスポンス形式', () => {
+    it('成功リクエストに対して正しいレスポンス構造を返す', async () => {
       mockGetMoviesByDate.mockResolvedValue(mockMovies);
 
       const request = createRequest('http://localhost:3000/api/movies/box-office?year=2023&month=1');
@@ -266,7 +266,7 @@ describe('/api/movies/box-office', () => {
       expect(data.data.movies).toEqual(mockMovies);
     });
 
-    it('returns correct response structure for error requests', async () => {
+    it('エラーリクエストに対して正しいレスポンス構造を返す', async () => {
       const request = createRequest('http://localhost:3000/api/movies/box-office?year=abc&month=1');
       const response = await GET(request);
       const data = await response.json();
@@ -279,8 +279,8 @@ describe('/api/movies/box-office', () => {
     });
   });
 
-  describe('Parameter Parsing', () => {
-    it('correctly parses integer parameters', async () => {
+  describe('パラメータ解析', () => {
+    it('整数パラメータを正しく解析する', async () => {
       mockGetMoviesByDate.mockResolvedValue([]);
 
       const request = createRequest('http://localhost:3000/api/movies/box-office?year=2023&month=5');
@@ -289,7 +289,7 @@ describe('/api/movies/box-office', () => {
       expect(mockGetMoviesByDate).toHaveBeenCalledWith(2023, 5);
     });
 
-    it('handles string numbers correctly', async () => {
+    it('文字列数値を正しく処理する', async () => {
       mockGetMoviesByDate.mockResolvedValue([]);
 
       const request = createRequest('http://localhost:3000/api/movies/box-office?year=2023&month=05');
@@ -298,7 +298,7 @@ describe('/api/movies/box-office', () => {
       expect(mockGetMoviesByDate).toHaveBeenCalledWith(2023, 5);
     });
 
-    it('handles floating point numbers by truncating', async () => {
+    it('浮動小数点数を切り捨てて処理する', async () => {
       mockGetMoviesByDate.mockResolvedValue([]);
 
       const request = createRequest('http://localhost:3000/api/movies/box-office?year=2023.5&month=5.9');

@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DateInputForm from '../DateInputForm';
 
@@ -10,7 +10,7 @@ describe('DateInputForm', () => {
     mockOnSubmit.mockClear();
   });
 
-  it('renders form elements correctly', () => {
+  it('フォーム要素が正しく表示される', () => {
     render(<DateInputForm onSubmit={mockOnSubmit} loading={false} />);
 
     expect(screen.getByLabelText('年（西暦）')).toBeInTheDocument();
@@ -18,14 +18,14 @@ describe('DateInputForm', () => {
     expect(screen.getByRole('button', { name: '映画ランキングを見る' })).toBeInTheDocument();
   });
 
-  it('shows placeholder text for year input', () => {
+  it('年入力フィールドにプレースホルダーテキストが表示される', () => {
     render(<DateInputForm onSubmit={mockOnSubmit} loading={false} />);
 
     const yearInput = screen.getByLabelText('年（西暦）');
     expect(yearInput).toHaveAttribute('placeholder', `例: ${currentYear - 25}`);
   });
 
-  it('renders month options correctly', () => {
+  it('月の選択肢が正しく表示される', () => {
     render(<DateInputForm onSubmit={mockOnSubmit} loading={false} />);
 
     const monthSelect = screen.getByLabelText('月');
@@ -37,8 +37,8 @@ describe('DateInputForm', () => {
     }
   });
 
-  describe('Form Validation', () => {
-    it('shows error when year is empty and form is submitted', async () => {
+  describe('フォームバリデーション', () => {
+    it('年が空でフォームが送信された時にエラーが表示される', async () => {
       const user = userEvent.setup();
       render(<DateInputForm onSubmit={mockOnSubmit} loading={false} />);
 
@@ -49,7 +49,7 @@ describe('DateInputForm', () => {
       expect(mockOnSubmit).not.toHaveBeenCalled();
     });
 
-    it('shows error when month is empty and form is submitted', async () => {
+    it('月が空でフォームが送信された時にエラーが表示される', async () => {
       const user = userEvent.setup();
       render(<DateInputForm onSubmit={mockOnSubmit} loading={false} />);
 
@@ -63,7 +63,7 @@ describe('DateInputForm', () => {
       expect(mockOnSubmit).not.toHaveBeenCalled();
     });
 
-    it('shows error when year is below minimum (1900)', async () => {
+    it('年が最小値（1900）を下回る時にエラーが表示される', async () => {
       const user = userEvent.setup();
       render(<DateInputForm onSubmit={mockOnSubmit} loading={false} />);
 
@@ -77,7 +77,7 @@ describe('DateInputForm', () => {
       expect(mockOnSubmit).not.toHaveBeenCalled();
     });
 
-    it('shows error when year is above current year', async () => {
+    it('年が現在年を上回る時にエラーが表示される', async () => {
       const user = userEvent.setup();
       render(<DateInputForm onSubmit={mockOnSubmit} loading={false} />);
 
@@ -91,7 +91,7 @@ describe('DateInputForm', () => {
       expect(mockOnSubmit).not.toHaveBeenCalled();
     });
 
-    it('only allows numeric input for year', async () => {
+    it('年入力フィールドで数値のみ入力可能である', async () => {
       const user = userEvent.setup();
       render(<DateInputForm onSubmit={mockOnSubmit} loading={false} />);
 
@@ -102,7 +102,7 @@ describe('DateInputForm', () => {
       expect(yearInput).toHaveValue('123');
     });
 
-    it('limits year input to 4 characters', async () => {
+    it('年入力フィールドが4文字に制限される', async () => {
       const user = userEvent.setup();
       render(<DateInputForm onSubmit={mockOnSubmit} loading={false} />);
 
@@ -114,8 +114,8 @@ describe('DateInputForm', () => {
     });
   });
 
-  describe('Form Submission', () => {
-    it('calls onSubmit with correct values when form is valid', async () => {
+  describe('フォーム送信', () => {
+    it('フォームが有効な時に正しい値でonSubmitが呼ばれる', async () => {
       const user = userEvent.setup();
       render(<DateInputForm onSubmit={mockOnSubmit} loading={false} />);
 
@@ -131,8 +131,7 @@ describe('DateInputForm', () => {
       expect(mockOnSubmit).toHaveBeenCalledWith(2000, 5);
     });
 
-    it('prevents form submission when loading', async () => {
-      const user = userEvent.setup();
+    it('ローディング中はフォーム送信が防止される', async () => {
       render(<DateInputForm onSubmit={mockOnSubmit} loading={true} />);
 
       const yearInput = screen.getByLabelText('年（西暦）');
@@ -147,8 +146,8 @@ describe('DateInputForm', () => {
     });
   });
 
-  describe('Error Clearing', () => {
-    it('clears year error when user starts typing valid input', async () => {
+  describe('エラークリア', () => {
+    it('ユーザーが有効な入力を開始した時に年のエラーがクリアされる', async () => {
       const user = userEvent.setup();
       render(<DateInputForm onSubmit={mockOnSubmit} loading={false} />);
 
@@ -166,7 +165,7 @@ describe('DateInputForm', () => {
       expect(screen.queryByText('年を入力してください')).not.toBeInTheDocument();
     });
 
-    it('clears month error when user selects a month', async () => {
+    it('ユーザーが月を選択した時に月のエラーがクリアされる', async () => {
       const user = userEvent.setup();
       render(<DateInputForm onSubmit={mockOnSubmit} loading={false} />);
 
@@ -188,8 +187,8 @@ describe('DateInputForm', () => {
     });
   });
 
-  describe('Loading State', () => {
-    it('shows loading spinner and text when loading', () => {
+  describe('ローディング状態', () => {
+    it('ローディング中にスピナーとテキストが表示される', () => {
       render(<DateInputForm onSubmit={mockOnSubmit} loading={true} />);
 
       const submitButton = screen.getByRole('button');
@@ -197,7 +196,7 @@ describe('DateInputForm', () => {
       expect(submitButton).toBeDisabled();
     });
 
-    it('disables form inputs when loading', () => {
+    it('ローディング中にフォーム入力が無効化される', () => {
       render(<DateInputForm onSubmit={mockOnSubmit} loading={true} />);
 
       const yearInput = screen.getByLabelText('年（西暦）');

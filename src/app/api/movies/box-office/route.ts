@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { tmdbService } from '@/services/tmdb';
-import { ApiResponse, BoxOfficeResponse, ErrorCode } from '@/types';
+import { ApiResponse, BoxOfficeResponse, ErrorCode, ApiError } from '@/types';
 
 export async function GET(request: NextRequest) {
   try {
@@ -90,7 +90,7 @@ export async function GET(request: NextRequest) {
     let errorResponse: ApiResponse<null>;
 
     if (error && typeof error === 'object' && 'code' in error) {
-      const apiError = error as any;
+      const apiError = error as ApiError;
       
       switch (apiError.code) {
         case ErrorCode.VALIDATION_ERROR:

@@ -77,7 +77,7 @@ export class TMDbService {
     const data: TMDbDiscoverResponse = await response.json();
 
     if (!response.ok) {
-      throw this.createNetworkError(response.status, data);
+      throw this.createNetworkError(response.status, data as Record<string, unknown>);
     }
 
     // 各映画の詳細情報とWatch Providersを並列取得
@@ -101,7 +101,7 @@ export class TMDbService {
       .filter(originalMovie => 
         !movieData.some(({ details }) => details && details.id === originalMovie.id && details.revenue > 0)
       )
-      .map((movie, index) => {
+      .map((movie) => {
         const watchProviders = movieData.find(({ details }) => details?.id === movie.id)?.watchProviders || [];
         return this.transformMovieWithFallback(movie, watchProviders);
       })
@@ -353,7 +353,7 @@ export class TMDbService {
   /**
    * Create standardized API error
    */
-  private createApiError(code: ErrorCode, message: string, details?: any): ApiError {
+  private createApiError(code: ErrorCode, message: string, details?: Record<string, unknown>): ApiError {
     return {
       code,
       message,
@@ -364,7 +364,7 @@ export class TMDbService {
   /**
    * Create network error with status code
    */
-  private createNetworkError(statusCode: number, data?: any): ApiError {
+  private createNetworkError(statusCode: number, data?: Record<string, unknown>): ApiError {
     let message = 'Network error occurred';
     let code = ErrorCode.NETWORK_ERROR;
 
