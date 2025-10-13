@@ -89,7 +89,7 @@ jobs:
         echo "Build verification complete"
       
     - name: Deploy to Vercel Preview
-      uses: vercel/action-deploy@v1
+      uses: amondnet/vercel-action@v25
       with:
         vercel-token: ${{ secrets.VERCEL_TOKEN }}
         vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
@@ -117,7 +117,7 @@ jobs:
         echo "Build verification complete"
     
     - name: Deploy to Vercel Production
-      uses: vercel/action-deploy@v1
+      uses: amondnet/vercel-action@v25
       with:
         vercel-token: ${{ secrets.VERCEL_TOKEN }}
         vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
