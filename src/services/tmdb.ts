@@ -19,7 +19,12 @@ export class TMDbService {
   constructor() {
     this.apiKey = process.env.TMDB_API_KEY || '';
     this.baseUrl = process.env.TMDB_BASE_URL || 'https://api.themoviedb.org/3';
+  }
 
+  /**
+   * Validate API key before making requests
+   */
+  private validateApiKey(): void {
     if (!this.apiKey) {
       throw new Error('TMDB_API_KEY environment variable is required');
     }
@@ -30,6 +35,9 @@ export class TMDbService {
    */
   async getMoviesByDate(year: number, month: number): Promise<Movie[]> {
     try {
+      // Validate API key
+      this.validateApiKey();
+      
       // Validate input parameters
       this.validateDateInput(year, month);
 
@@ -115,6 +123,8 @@ export class TMDbService {
    */
   async getMovieDetails(movieId: number): Promise<TMDbMovieResponse> {
     try {
+      // Validate API key
+      this.validateApiKey();
       const response = await this.fetchWithTimeout(
         `${this.baseUrl}/movie/${movieId}?api_key=${this.apiKey}&language=ja-JP`
       );
@@ -136,6 +146,8 @@ export class TMDbService {
    */
   async getMovieDetailsWithRevenue(movieId: number): Promise<TMDbMovieDetailsResponse | null> {
     try {
+      // Validate API key
+      this.validateApiKey();
       const response = await this.fetchWithTimeout(
         `${this.baseUrl}/movie/${movieId}?api_key=${this.apiKey}&language=ja-JP`
       );
@@ -159,6 +171,8 @@ export class TMDbService {
    */
   async getWatchProviders(movieId: number): Promise<WatchProvider[]> {
     try {
+      // Validate API key
+      this.validateApiKey();
       const response = await this.fetchWithTimeout(
         `${this.baseUrl}/movie/${movieId}/watch/providers?api_key=${this.apiKey}`
       );
@@ -206,6 +220,8 @@ export class TMDbService {
    */
   private async loadGenres(): Promise<void> {
     try {
+      // Validate API key
+      this.validateApiKey();
       const response = await this.fetchWithTimeout(
         `${this.baseUrl}/genre/movie/list?api_key=${this.apiKey}&language=ja-JP`
       );
